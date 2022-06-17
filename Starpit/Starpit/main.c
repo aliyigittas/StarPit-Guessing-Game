@@ -17,6 +17,7 @@ int PlusSign;
 int NegativeSign;
 int menu;
 int back;
+int GuessCount = 0;
 bool GameOver;
 bool GameStarted;
 bool IsFourDigit;
@@ -32,17 +33,13 @@ static void HomeScreen(){ //Main Menu
     printf(". ######::::: ##:::: ##:::: ##: ##:::. ##: ##::::::::'####:::: ##::::\n");
     printf(":......::::::..:::::..:::::..::..:::::..::..:::::::::....:::::..:::::\n");
 
-    printf("\n");
-    printf("Welcome to number guessing game StarPit!\n");
-    printf("\n");
-    printf("1.Start Game\n");
-    printf("\n");
-    printf("2.How to Play\n");
-    printf("\n");
-    printf("3.Exit\n");
-    printf("\n");
+    printf("\nWelcome to number guessing game StarPit!\n\n");
+    printf("1.Start Game\n\n");
+    printf("2.How to Play\n\n");
+    printf("3.Exit\n\n");
     printf("Your Selection:");
     scanf("%d",&menu);
+    
     switch (menu) {
         case 1: //Starts Game
             GameStarted = true;
@@ -59,7 +56,6 @@ static void HomeScreen(){ //Main Menu
             printf("FUTURE UPDATES:\n");
             printf("\n");
             printf(">  2 player mode\n");
-            printf(">  Number of predictions.\n");
             printf(">  And some other new features...\n");
             printf("\nPress 0 and enter to go back.\n");
             scanf("%d",&back);
@@ -84,21 +80,21 @@ static void GenerateRandomNumber(){
     
     for (int i = 0; i < count; i++) {
         RandomNumber[i] = (rand() % (upper - lower + 1)) + lower; //Generates 4 random digits between 1 and 9
-        //printf("%d ", RandomNumber[i]);
+        //printf("%d", RandomNumber[i]); //If you want to see answer uncomment this line.
     }
     printf("\n");
-    if (RandomNumber[0] == 0 || RandomNumber[0] == RandomNumber[1] || RandomNumber[0] == RandomNumber[2]
+    if (RandomNumber[0] == RandomNumber[1] || RandomNumber[0] == RandomNumber[2]
         || RandomNumber[0] == RandomNumber[3] || RandomNumber[1] == RandomNumber[2] || RandomNumber[1] == RandomNumber[2]
         || RandomNumber[1] == RandomNumber[3] || RandomNumber[2] == RandomNumber[3]){//checks the random number for repeated digits and zero at the beginning.
         
-        printf("Random number does not match our criterias. Generating again...\n");
+        //printf("Random number does not match our criterias. Generating again...\n");
         system("clear || cls");
         GenerateRandomNumber();
     }
 }
 
 static void TakeInput(){
-    
+    printf("Guess Count: %d\n",GuessCount);
     printf("Enter number here:");
     scanf("%d",&GuessNumber);
     
@@ -109,11 +105,11 @@ static void TakeInput(){
             SeperatedNumber[i] = mod;    //transfer last digit to array
             GuessNumber = GuessNumber / 10;  //remove the last "0" digit
         }
-        if (SeperatedNumber[0] == 0 || SeperatedNumber[0] == SeperatedNumber[1] || SeperatedNumber[0] == SeperatedNumber[2]
+        if (SeperatedNumber[0] == SeperatedNumber[1] || SeperatedNumber[0] == SeperatedNumber[2]
             || SeperatedNumber[0] == SeperatedNumber[3] || SeperatedNumber[1] == SeperatedNumber[2] || SeperatedNumber[1] == SeperatedNumber[2]
             || SeperatedNumber[1] == SeperatedNumber[3] || SeperatedNumber[2] == SeperatedNumber[3]){ //checks the user guess is matching our criterias or not
             
-            printf("Please do not use zero at the beginning and same numbers in the input!\n");
+            printf("Please do not use same numbers in the input!\n");
             printf("\n");
             TakeInput();
         }
@@ -139,6 +135,7 @@ static void Compare(){
     }
     printf("Hint: +%d / -%d\n", PlusSign, NegativeSign);
     printf("\n");
+    GuessCount++;
     
     if (PlusSign==4){ // If user guessed correctly game stops.
         GameOver = true;
@@ -165,7 +162,8 @@ int main() {
         }
         
         if (GameOver == true){
-            printf("Congratulations!\n");
+            printf("Congratulations!\nYou found the number correctly with %d guesses!\n", GuessCount);
+            
             GameStarted = false;
         }
     }
