@@ -1,5 +1,5 @@
 # StarPit Number Guessing Game
-Thank you for playing StarPit.
+Thank you for playing StarPit. (Also known as MasterMind)
 
 In this game, you need to predict 4-digit number generated from AI.
 
