@@ -15,7 +15,7 @@ Program does not use same digits in same number when generating random number. S
 
 ## FUTURE UPDATES
 
-- [ ] 2 player mode
+- [x] 2 player mode
 
 - [x] Number of predictions.
 
