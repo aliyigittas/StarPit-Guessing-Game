@@ -18,8 +18,12 @@ int NegativeSign;
 int menu;
 int back;
 int GuessCount = 0;
+int SelectPlayers;
+int OpponentInput;
+int SeperatedOpponentInput[4];
 bool GameOver;
-bool GameStarted;
+bool OnePlayerGameStarted;
+bool TwoPlayerGameStarted;
 bool IsFourDigit;
 
 static void HomeScreen(){ //Main Menu
@@ -42,7 +46,18 @@ static void HomeScreen(){ //Main Menu
     
     switch (menu) {
         case 1: //Starts Game
-            GameStarted = true;
+            system("clear || cls");
+            printf("1. Singleplayer\n\n");
+            printf("2. 2 Players\n\n");
+            printf("Your Selection:");
+            scanf("%d",&SelectPlayers);
+            if (SelectPlayers == 1){
+                OnePlayerGameStarted = true;
+            }else if (SelectPlayers == 2){
+                TwoPlayerGameStarted = true;
+            }else{
+                printf("Please Select 1 or 2!.\n");
+            }
             break;
         case 2: //How to Play
             system("clear || cls");
@@ -118,41 +133,87 @@ static void TakeInput(){
         printf("Please enter 4-digit number!\n\n");
         IsFourDigit = false;
     }
-    
-    
 }
 
 static void Compare(){
     
-    for (int i=0;i<4;i++){
-        if (SeperatedNumber[i] == RandomNumber[i]){ //checks digits in the correct position or not
-            PlusSign++;
-            
-        }else if (SeperatedNumber[i] == RandomNumber[0] || SeperatedNumber[i] == RandomNumber[1]
-                  || SeperatedNumber[i] == RandomNumber[2] || SeperatedNumber[i] == RandomNumber[3]){ //checks other positions for given digit
-            NegativeSign++;
+    if (OnePlayerGameStarted==true){
+        
+        for (int i=0;i<4;i++){
+            if (SeperatedNumber[i] == RandomNumber[i]){ //checks digits in the correct position or not
+                PlusSign++;
+                
+            }else if (SeperatedNumber[i] == RandomNumber[0] || SeperatedNumber[i] == RandomNumber[1]
+                      || SeperatedNumber[i] == RandomNumber[2] || SeperatedNumber[i] == RandomNumber[3]){ //checks other positions for given digit
+                NegativeSign++;
+            }
         }
+        printf("Hint: +%d / -%d\n", PlusSign, NegativeSign);
+        printf("\n");
+        GuessCount++;
+        
+        if (PlusSign==4){ // If user guessed correctly game stops.
+            GameOver = true;
+        }else{
+            GameOver = false;
+        }
+        
+        PlusSign=0; NegativeSign=0; //resetting values for next usage
     }
-    printf("Hint: +%d / -%d\n", PlusSign, NegativeSign);
-    printf("\n");
-    GuessCount++;
     
-    if (PlusSign==4){ // If user guessed correctly game stops.
-        GameOver = true;
-    }else{
-        GameOver = false;
+    if (TwoPlayerGameStarted==true){
+        for (int i=0;i<4;i++){
+            if (SeperatedNumber[i] == SeperatedOpponentInput[i]){ //checks digits in the correct position or not
+                PlusSign++;
+                
+            }else if (SeperatedNumber[i] == SeperatedOpponentInput[0] || SeperatedNumber[i] == SeperatedOpponentInput[1]
+                      || SeperatedNumber[i] == SeperatedOpponentInput[2] || SeperatedNumber[i] == SeperatedOpponentInput[3]){ //checks other positions for given digit
+                NegativeSign++;
+            }
+        }
+        printf("Hint: +%d / -%d\n", PlusSign, NegativeSign);
+        printf("\n");
+        GuessCount++;
+        
+        if (PlusSign==4){ // If user guessed correctly game stops.
+            GameOver = true;
+        }else{
+            GameOver = false;
+        }
+        
+        PlusSign=0; NegativeSign=0; //resetting values for next usage
     }
-    
-    PlusSign=0; NegativeSign=0; //resetting values for next usage
 }
 
+static void GetNumberFromAnotherPlayer(){
+    system("clear || cls");
+    printf("Enter the number you want your opponent to find. (4-digits)\n");
+    printf("Enter Here:");
+    scanf("%d", &OpponentInput);
+    
+    if (OpponentInput >= 1000 && OpponentInput <= 9999){
+        for (int i=3;i>=0;i--){
+            int mod = OpponentInput % 10;  //Take the last digit
+            SeperatedOpponentInput[i] = mod;    //transfer last digit to array
+            OpponentInput = OpponentInput / 10;  //remove the last "0" digit
+        }
+    }else{
+        GetNumberFromAnotherPlayer();
+    }
+}
 
 int main() {
     system("clear || cls");
     HomeScreen();
-    if (GameStarted == true){
-        srand((int)time(0));
-        GenerateRandomNumber();
+    if (OnePlayerGameStarted == true || TwoPlayerGameStarted == true){
+        
+        if (OnePlayerGameStarted == true){
+            srand((int)time(0));
+            GenerateRandomNumber();
+        }else if (TwoPlayerGameStarted == true){
+            GetNumberFromAnotherPlayer();
+            
+        }
         
         while (GameOver == false){
             TakeInput();
@@ -164,9 +225,8 @@ int main() {
         if (GameOver == true){
             printf("Congratulations!\nYou found the number correctly with %d guesses!\n", GuessCount);
             
-            GameStarted = false;
+            OnePlayerGameStarted = false;
         }
     }
- 
     return 0;
 }
